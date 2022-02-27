@@ -2,12 +2,13 @@ import org.scalatest.{FunSuite, Matchers}
 
 class AlphameticsParserTest extends FunSuite with Matchers {
 
-  import AlphameticsParser._
+  import Alphametics._
+  import Alphametics.AlphameticsParser._
 
   def testParser(parser: Parser[AlphameticsAST])
-           (expression: String): Either[AlphameticsParserError, AlphameticsAST] = {
+           (expression: String): Either[ParserError, AlphameticsAST] = {
     AlphameticsParser.parse(parser, expression) match {
-      case NoSuccess(msg, _) => Left(AlphameticsParserError(msg))
+      case NoSuccess(msg, _) => Left(ParserError(msg))
       case Success(result, _) => Right(result)
     }
   }

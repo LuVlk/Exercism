@@ -2,10 +2,13 @@ import org.scalatest.{FunSuite, Matchers}
 
 class AlphameticsCompilerTest extends FunSuite with Matchers {
 
+  import Alphametics._
+
   test("compile simple equation") {
     val testee = AlphameticsCompiler.compile(Equals(Variable("A"), Variable("B")))
-    assert(testee.right.get.eval(Map('A' -> 1, 'B' -> 1)))
-    assert(!testee.right.get.eval(Map('A' -> 1, 'B' -> 2)))
+    assert(testee.right.get.eval(Map('A' -> 1, 'B' -> 1)).right.get)
+    assert(!testee.right.get.eval(Map('A' -> 1, 'B' -> 2)).right.get)
+    assert(testee.right.get.eval(Map('B' -> 1, 'C' -> 2)) === Left(RuntimeError("key 'A' was not found")))
   }
 
   test("invalid AST") {
