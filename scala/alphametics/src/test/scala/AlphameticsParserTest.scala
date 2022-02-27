@@ -7,7 +7,7 @@ class AlphameticsParserTest extends FunSuite with Matchers {
 
   def testParser(parser: Parser[AlphameticsAST])
            (expression: String): Either[ParserError, AlphameticsAST] = {
-    AlphameticsParser.parse(parser, expression) match {
+    parse(parser, expression) match {
       case NoSuccess(msg, _) => Left(ParserError(msg))
       case Success(result, _) => Right(result)
     }
@@ -58,5 +58,49 @@ class AlphameticsParserTest extends FunSuite with Matchers {
 
     assert(p("A == B == C").isLeft)
     assert(p("A").isLeft)
+  }
+
+  test("parses alphametics and creates trivial solution") {
+    assert(AlphameticsParser.parse("A == B") === (
+      Right(Equals(Variable("A"), Variable("B"))),
+      Some(Map('A' -> 0, 'B' -> 0))
+    ))
+  }
+
+  test("creates solution with unique letters") {
+    assert(AlphameticsParser.parse("ABB == CBA") === (
+      Right(Equals(Variable("ABB"), Variable("CBA"))),
+      Some(Map('A' -> 0, 'B' -> 0, 'C' -> 0))
+    ))
+  }
+
+  test("order within solution does not matter") {
+    assert(AlphameticsParser.parse("CBA == CBA") === (
+      Right(Equals(Variable("CBA"), Variable("CBA"))),
+      Some(Map('A' -> 0, 'B' -> 0, 'C' -> 0))
+    ))
+
+    assert(AlphameticsParser.parse("ABC == ABC") === (
+      Right(Equals(Variable("ABC"), Variable("ABC"))),
+      Some(Map('A' -> 0, 'B' -> 0, 'C' -> 0))
+    ))
+  }
+
+  test("produces same results every time") {
+    assert(AlphameticsParser.parse("A == B") === (
+      Right(Equals(Variable("A"), Variable("B"))),
+      Some(Map('A' -> 0, 'B' -> 0))
+    ))
+    assert(AlphameticsParser.parse("A == B") === (
+      Right(Equals(Variable("A"), Variable("B"))),
+      Some(Map('A' -> 0, 'B' -> 0))
+    ))
+  }
+
+  test("does not return a solution if parsing fails") {
+    assert(AlphameticsParser.parse("A") === (
+      Left(ParserError("string matching regex `==' expected but end of source found")),
+      None
+    ))
   }
 }
