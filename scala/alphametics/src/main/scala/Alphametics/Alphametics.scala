@@ -65,12 +65,18 @@ package object Alphametics {
 
     private def compileExpression(ast: AlphameticsAST): CompilationResult[Int] = ast match {
 
-      // Convert letters to string of numbers and parse to int.
-      // Return runtime error if letter was not found in evaluation input.
+      /*
+        Convert letters to string of numbers and parse to int.
+        Runtime error cases:
+         - if letter was not found in evaluation input.
+         - if leading letter in multi letter variable is equal to 0.
+       */
       case Variable(letters) => Right(
         AlphameticsEvaluator(solution => letters.foldLeft[EvaluationResult[String]](Right(""))(
-          (evalR, c) => evalR.fold(Left(_), acc => solution.get(c) match {
-            case None => Left(RuntimeError(s"key '$c' was not found"))
+          (evalR, char) => evalR.fold(Left(_), acc => solution.get(char) match {
+            case None => Left(RuntimeError(s"key '$char' was not found"))
+            case Some(value) if letters.length > 1 && letters.charAt(0) == char && value == 0 =>
+              Left(RuntimeError(s"solution with leading 0 in multi letter variable is not allowed (variable: '$letters', letter: '$char', value: '$value')."))
             case Some(value) => Right(acc + value.toString)
           })
         ).fold(Left(_), s => Right(s.toInt)))
@@ -87,5 +93,16 @@ package object Alphametics {
         (evalR1, evalR2) => for { result1 <- evalR1; result2 <- evalR2 } yield result1 == result2 )
       case _ => Left(CompilerError(s"Unexpected AST node $ast"))
     }
+  }
+
+  object AlphameticsSolver {
+    var solutions: List[AlphameticsSolution] = List()
+
+    def solve(startSolution: AlphameticsSolution, solutionEvaluator: AlphameticsEvaluator[Boolean]): Option[AlphameticsSolution] = {
+      solutions = List()
+      val searchSpace = 0 to 9 by 1
+      None
+    }
+
   }
 }
