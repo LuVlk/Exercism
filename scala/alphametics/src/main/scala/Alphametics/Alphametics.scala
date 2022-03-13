@@ -160,6 +160,8 @@ package object Alphametics {
 
       generateAndEvaluateSolutionsFor(testee.keys)
 
+      // only keep solutions with unique values
+      solutions = solutions.takeWhile(solution => solution.values.toSet.size == solution.size)
       if (solutions.isEmpty) Left(RuntimeError("no solution found"))
       else if (solutions.size > 1) Left(RuntimeError("multiple solutions are not allowed"))
       else Right(solutions.head)

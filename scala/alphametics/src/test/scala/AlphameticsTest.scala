@@ -17,7 +17,6 @@ class AlphameticsTest extends FunSuite with Matchers {
   }
 
   test("puzzle with two digits final carry") {
-    pending
     Alphametics.solve("A + A + A + A + A + A + A + A + A + A + A + B == BCC") should be(
       Some(Map('A' -> 9, 'B' -> 1, 'C' -> 0)))
   }
