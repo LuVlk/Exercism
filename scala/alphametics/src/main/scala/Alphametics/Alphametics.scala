@@ -4,7 +4,17 @@ import scala.util.parsing.combinator.JavaTokenParsers
 package object Alphametics {
 
   type AlphameticsSolution = Map[Char, Int]
-  def solve(expr: String): Option[AlphameticsSolution] = ???
+  def solve(expr: String): Option[AlphameticsSolution] = {
+    val parsingResult = AlphameticsParser.parse(expr)
+    (for {
+      ast <- parsingResult._1
+      evaluator <- AlphameticsCompiler.compile(ast)
+      solution <- AlphameticsSolver.solve(parsingResult._2.get, evaluator)
+    } yield solution).fold(
+      _ => None,
+      sln => Some(sln)
+    )
+  }
 
   case class ParserError(msg: String) extends Throwable(msg)
   case class CompilerError(msg: String) extends Throwable(msg)
@@ -26,8 +36,9 @@ package object Alphametics {
   object AlphameticsParser extends JavaTokenParsers {
     var solution: AlphameticsSolution = Map()
 
-    def variable: Parser[AlphameticsAST] = Variable.asInstanceOf[Regex] ^^
-      { letters => letters.foreach(c => solution = solution.updated(c, 0)); Variable(letters) }
+    def variable: Parser[AlphameticsAST] = Variable.asInstanceOf[Regex] ^^ {
+      letters => letters.foreach(c => solution = solution.updated(c, 0)); Variable(letters)
+    }
 
     def expression: Parser[AlphameticsAST] = variable ~ rep(Add ~ variable) ^^ {
       case ast ~ asts => asts.foldLeft[AlphameticsAST](ast) {
@@ -45,7 +56,9 @@ package object Alphametics {
       solution = Map() // clear map at start due to stateful parsing
       parse(alphametics, text) match {
         case NoSuccess(msg, _) => (Left(ParserError(msg)), None)
-        case Success(result, _) => (Right(result), Some(solution))
+        case Success(result, _) =>
+          if (solution.size > 10) (Left(ParserError("exceeded maximum number of unique letters (10)")), None)
+          (Right(result), Some(solution))
       }
     }
   }
@@ -74,9 +87,9 @@ package object Alphametics {
       case Variable(letters) => Right(
         AlphameticsEvaluator(solution => letters.foldLeft[EvaluationResult[String]](Right(""))(
           (evalR, char) => evalR.fold(Left(_), acc => solution.get(char) match {
-            case None => Left(RuntimeError(s"key '$char' was not found"))
+            case None => Left(RuntimeError(s"letter '$char' was not found"))
             case Some(value) if letters.length > 1 && letters.charAt(0) == char && value == 0 =>
-              Left(RuntimeError(s"solution with leading 0 in multi letter variable is not allowed (variable: '$letters', letter: '$char', value: '$value')."))
+              Left(RuntimeError(s"solution with leading 0 in multi letter variable is not allowed (variable: '$letters')"))
             case Some(value) => Right(acc + value.toString)
           })
         ).fold(Left(_), s => Right(s.toInt)))
@@ -91,18 +104,65 @@ package object Alphametics {
     def compile(ast: AlphameticsAST): CompilationResult[Boolean] = ast match {
       case Equals(ast1, ast2) => map2(compileExpression(ast1), compileExpression(ast2))(
         (evalR1, evalR2) => for { result1 <- evalR1; result2 <- evalR2 } yield result1 == result2 )
+
       case _ => Left(CompilerError(s"Unexpected AST node $ast"))
     }
   }
 
   object AlphameticsSolver {
-    var solutions: List[AlphameticsSolution] = List()
 
-    def solve(startSolution: AlphameticsSolution, solutionEvaluator: AlphameticsEvaluator[Boolean]): Option[AlphameticsSolution] = {
-      solutions = List()
-      val searchSpace = 0 to 9 by 1
-      None
+    /** solves alphametics puzzle using following algorithm:
+     *
+     * 0 test startSolution and add to solutions on success
+     *
+     * 1
+     * if value less than 9 increase value of first key to next possible value --
+     *   test and add to solutions on success --
+     *   repeat 1 --
+     * reset value of first key
+     *
+     * 2
+     * if value is less that 9 increase value of second key to next possible value --
+     *   test and add to solutions on success --
+     *   repeat 1 --
+     *   repeat 2 --
+     * reset value of second key
+     *
+     * ... continue to last key
+     */
+    def solve(startSolution: AlphameticsSolution, solutionEvaluator: AlphameticsEvaluator[Boolean]): Either[RuntimeError, AlphameticsSolution] = {
+
+      var solutions: Set[AlphameticsSolution] = Set()
+      var testee = startSolution
+      if (solutionEvaluator.eval(testee).getOrElse(false)) solutions += testee
+
+      var previousLetters: Set[Char] = Set()
+
+      def nextValueFor(letter: Char): Int = {
+        val reserved = testee.dropWhile(item => item._1 == letter).values.toSet
+        var next = testee(letter) + 1
+        while (reserved.contains(next)) next += 1
+        next
+      }
+
+      def generateAndEvaluateSolutionsFor(letters: Iterable[Char]): Unit = {
+        letters.foreach(letter => {
+          val initial = testee(letter)
+          while (testee(letter) < 9) {
+            testee = testee.updated(letter, nextValueFor(letter))
+            if (solutionEvaluator.eval(testee).getOrElse(false)) solutions += testee
+            generateAndEvaluateSolutionsFor(previousLetters)
+          }
+          testee = testee.updated(letter, initial)
+          previousLetters += letter // using Set so recursive calls do not add additional previous letters
+        })
+      }
+
+      generateAndEvaluateSolutionsFor(testee.keys)
+
+      if (solutions.isEmpty) Left(RuntimeError("no solution found"))
+      else if (solutions.size > 1) Left(RuntimeError("multiple solutions are not allowed"))
+      else Right(solutions.head)
     }
-
   }
 }

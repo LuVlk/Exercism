@@ -9,12 +9,10 @@ class AlphameticsTest extends FunSuite with Matchers {
   }
 
   test("solution must have unique value for each letter") {
-    pending
     Alphametics.solve("A == B") should be(None)
   }
 
   test("leading zero solution is invalid") {
-    pending
     Alphametics.solve("ACA + DD == BD") should be(None)
   }
 
