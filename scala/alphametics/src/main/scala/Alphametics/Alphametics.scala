@@ -5,12 +5,14 @@ package object Alphametics {
 
   type AlphameticsSolution = Map[Char, Int]
   def solve(expr: String): Option[AlphameticsSolution] = {
-    val parsingResult = AlphameticsParser.parse(expr)
-    (for {
-      ast <- parsingResult._1
+    val parsingResultAndStartSolution = AlphameticsParser.parse(expr)
+    val parsingResult = parsingResultAndStartSolution._1
+    val startSolution = parsingResultAndStartSolution._2
+    ( for {
+      ast <- parsingResult
       evaluator <- AlphameticsCompiler.compile(ast)
-      solution <- AlphameticsSolver.solve(parsingResult._2.get, evaluator)
-    } yield solution).fold(
+      solution <- AlphameticsSolver.solve(startSolution.get, evaluator)
+    } yield solution ).fold(
       _ => None,
       sln => Some(sln)
     )
@@ -58,7 +60,7 @@ package object Alphametics {
         case NoSuccess(msg, _) => (Left(ParserError(msg)), None)
         case Success(result, _) =>
           if (solution.size > 10) (Left(ParserError("exceeded maximum number of unique letters (10)")), None)
-          (Right(result), Some(solution))
+          else (Right(result), Some(solution))
       }
     }
   }
@@ -78,11 +80,10 @@ package object Alphametics {
 
     private def compileExpression(ast: AlphameticsAST): CompilationResult[Int] = ast match {
 
-      /*
-        Convert letters to string of numbers and parse to int.
-        Runtime error cases:
-         - if letter was not found in evaluation input.
-         - if leading letter in multi letter variable is equal to 0.
+      /** Convert letters to string of numbers and parse to int.
+       *  Runtime error cases:
+       *  - if letter was not found in evaluation input.
+       *  - if leading letter in multi letter variable is equal to 0.
        */
       case Variable(letters) => Right(
         AlphameticsEvaluator(solution => letters.foldLeft[EvaluationResult[String]](Right(""))(
