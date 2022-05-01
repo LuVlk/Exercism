@@ -1,16 +1,12 @@
 object BinarySearch {
   def find[A](list: List[A], element: A)(implicit ordering: Ordering[A]): Option[Int] = {
-    var l = list
-    var offset = 0
-    while (l.nonEmpty) {
-      val i = l.length / 2
-      val el = l(i)
-      if (el == element) return Some(i + offset)
+    var (low, high) = (0, list.length - 1)
 
-      if (l.length == 1) return None
-      val (l1, l2) = l.splitAt(i)
-      if (ordering.lt(element, el)) l = l1
-      else { l = l2; offset += i }
+    while (low <= high) {
+      val mid = (low + high) / 2
+      if (list(mid) == element) return Some(mid)
+      if (ordering.lt(element, list(mid))) high = mid - 1
+      else low = mid + 1
     }
     None
   }
