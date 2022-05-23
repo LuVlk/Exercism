@@ -11,21 +11,19 @@ class DequeTest extends AnyFlatSpec with Matchers {
     deque.push('b')
     deque.pop should be (Some('b'))
     deque.pop should be (Some('a'))
-//    linkedList.pop should be (None)
+    deque.pop should be (None)
   }
 
   it should "handle push then shift" in {
-    pending
     val deque = Deque[Char]()
     deque.push('a')
     deque.push('b')
     deque.shift should be (Some('a'))
     deque.shift should be (Some('b'))
-//    linkedList.shift should be (None)
+    deque.shift should be (None)
   }
 
   it should "handle unshift then shift" in {
-    pending
     val deque = Deque[Char]()
     deque.unshift('a')
     deque.unshift('b')
@@ -34,7 +32,6 @@ class DequeTest extends AnyFlatSpec with Matchers {
   }
 
   it should "handle unshift then pop" in {
-    pending
     val deque = Deque[Char]()
     deque.unshift('a')
     deque.unshift('b')
@@ -43,7 +40,6 @@ class DequeTest extends AnyFlatSpec with Matchers {
   }
 
   it should "handle complex interaction" in {
-    pending
     val deque = Deque[Int]()
     deque.push(1)
     deque.push(2)
