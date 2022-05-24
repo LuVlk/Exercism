@@ -1,6 +1,5 @@
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import queenAttack._
 
 /** @version 2.1.0 */
 class QueenAttackTest extends AnyFunSuite with Matchers {
