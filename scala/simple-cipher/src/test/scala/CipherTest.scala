@@ -15,51 +15,43 @@ class CipherTest extends AnyFunSuite with Matchers {
     cipher.decode(cipher.key.substring(0, 10)) should be ("aaaaaaaaaa")
   }
 
-  test("Invalid key - contains caps") { 
-    pending
+  test("Invalid key - contains caps") {
     intercept[IllegalArgumentException] { 
       Cipher(Some("ABCD"))
     }
   }
 
-  test("Invalid key - contains numerics") { 
-    pending
+  test("Invalid key - contains numerics") {
     intercept[IllegalArgumentException] {
       Cipher(Some("123"))
     }
   }
 
-  test("Invalid key - is empty") { 
-    pending
+  test("Invalid key - is empty") {
     intercept[IllegalArgumentException] {
       Cipher(Some(""))
     }
   }
 
-  test("Substitution cipher - can encode") { 
-    pending
+  test("Substitution cipher - can encode") {
     Cipher(Some("abcdefghij")).encode("aaaaaaaaaa") should be ("abcdefghij")
   }
 
-  test("Substitution cipher - can decode") { 
-    pending
+  test("Substitution cipher - can decode") {
     Cipher(Some("abcdefghij")).decode("abcdefghij") should be ("aaaaaaaaaa")
   }
 
-  test("Substitution cipher - is reversible") { 
-    pending
+  test("Substitution cipher - is reversible") {
     val cipher = Cipher(Some("abcdefghij"))
     cipher.decode(cipher.encode("abcdefghij")) should be ("abcdefghij")
   }
 
-  test("Substitution cipher - can double shift") { 
-    pending
+  test("Substitution cipher - can double shift") {
     val cipher = Cipher(Some("iamapandabear"))
     cipher.encode("iamapandabear") should be ("qayaeaagaciai")
   }
 
-  test("Substitution cipher - can wrap") { 
-    pending
+  test("Substitution cipher - can wrap") {
     Cipher(Some("abcdefghij")).encode("zzzzzzzzzz") should be ("zabcdefghi")
   }
 }
