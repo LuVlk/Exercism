@@ -1,32 +1,26 @@
 import scala.collection.mutable
 
 case class Cipher(key: String) {
-  lazy private val alpha = 'a' to 'z'
-
   private def act(applyShift: (Char, Int) => Int)(text: String): String = {
-    val sb = new mutable.StringBuilder()
-    for (i <- 0 until text.length) {
+    var i = 0
+    text.map(c => {
       val shift = {
-        val alphabeticShift = {
+        val charShift = {
           // wrap on key overflow
           if (i >= key.length) key(i - key.length)
           else key(i)
         }
-
-        alphabeticShift - 97
+        i = i + 1
+        charShift - 'a'.toInt
       }
 
-      val encodedChar = {
-        val encodedCharIndex = applyShift(text(i), shift) - 97
-        // wrap on alphabet overflow
-        if (encodedCharIndex > 25) alpha(encodedCharIndex - 26)
-        else if (encodedCharIndex < 0) alpha(26 - encodedCharIndex)
-        else alpha(encodedCharIndex)
-      }
+      val newC = applyShift(c, shift)
 
-      sb.append(encodedChar)
-    }
-    sb.toString()
+      // wrap on alphabet overflow
+      if (newC > ('a'.toInt + 25)) newC - 26
+      else if (newC < 'a'.toInt) newC + 26
+      else newC
+    }).map(_.toChar).mkString("")
   }
 
   def encode(text: String): String = act(_ + _)(text)
