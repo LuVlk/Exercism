@@ -28,8 +28,10 @@ object SimpleLinkedList {
 
     override def next: SimpleLinkedList[T] = _next.getOrElse(Node())
 
-    // creates in memory copy. Improve !
-    override def reverse: SimpleLinkedList[T] = fromSeq(toSeq.reverse)
+    override def reverse: SimpleLinkedList[T] = {
+      if (isEmpty) this
+      else next.reverse.add(value)
+    }
 
     override def toSeq: Seq[T] = {
       if (isEmpty) Seq()
