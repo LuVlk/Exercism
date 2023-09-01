@@ -13,7 +13,7 @@ fn is_anagram(word: &str, other_word: &str) -> bool {
 pub fn anagrams_for<'a>(word: &str, possible_anagrams: &[&'a str]) -> HashSet<&'a str> {
     possible_anagrams
         .iter()
+        .filter(|w| word.len() == w.len() && is_anagram(&word.to_lowercase(), &w.to_lowercase()))
         .copied()
-        .filter(|w| { is_anagram(&word.to_lowercase(), &w.to_lowercase()) })
         .collect()
 }
