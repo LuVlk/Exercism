@@ -22,35 +22,26 @@ pub trait Planet {
     fn years_during(d: &Duration) -> f64;
 }
 
-use planet_derive::Planet;
+macro_rules! planets {
+    { $( $name:ident { earth_years = $earth_years:expr } ),+ } => {
+        $(
+            pub struct $name;
+            impl Planet for $name {
+                fn years_during(d: &Duration) -> f64 {
+                    d.years() / $earth_years
+                }
+            }
+        )+
+    };
+}
 
-#[derive(Planet)]
-pub struct Earth;
-
-#[derive(Planet)]
-#[earth_years = 0.2408467]
-pub struct Mercury;
-
-#[derive(Planet)]
-#[earth_years = 0.61519726]
-pub struct Venus;
-
-#[derive(Planet)]
-#[earth_years = 1.8808158]
-pub struct Mars;
-
-#[derive(Planet)]
-#[earth_years = 11.862615]
-pub struct Jupiter;
-
-#[derive(Planet)]
-#[earth_years = 29.447498]
-pub struct Saturn;
-
-#[derive(Planet)]
-#[earth_years = 84.016846]
-pub struct Uranus;
-
-#[derive(Planet)]
-#[earth_years = 164.79132]
-pub struct Neptune;
+planets! {
+    Earth { earth_years = 1.0 },
+    Mercury { earth_years = 0.2408467 },
+    Venus { earth_years = 0.61519726 },
+    Mars { earth_years = 1.8808158 },
+    Jupiter { earth_years = 11.862615 },
+    Saturn { earth_years = 29.447498 },
+    Uranus { earth_years = 84.016846 },
+    Neptune { earth_years = 164.79132 }
+}
