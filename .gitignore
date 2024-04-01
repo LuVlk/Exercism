@@ -5,3 +5,7 @@
 
 project
 target
+
+**/node_modules
+**/[O|o]bj
+**/[B|b]in
