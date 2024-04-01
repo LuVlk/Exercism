@@ -7,7 +7,6 @@ project
 target
 
 **/node_modules
-**/.yarn
-!**/.yarn/releases/*
+**/.yarn/cache
 **/[O|o]bj
 **/[B|b]in
