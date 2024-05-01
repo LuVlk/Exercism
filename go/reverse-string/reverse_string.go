@@ -1,9 +1,9 @@
 package reverse
 
 func Reverse(input string) string {
-	out := ""
-	for _, c := range input {
-		out = string(c) + out
+	runes := []rune(input)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
 	}
-	return out
+	return string(runes)
 }
