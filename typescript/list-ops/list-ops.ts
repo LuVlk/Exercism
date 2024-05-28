@@ -6,76 +6,53 @@
 
 export class List {
 
-  private values: unknown[]
-
-  constructor(values: unknown[]) {
-    this.values = values
-  }
+  constructor(readonly values: unknown[]) { }
 
   public static create(...values: unknown[]): List {
     return new List(values)
   }
 
   public forEach(callback: (e: unknown) => void): void {
-    for (let index = 0; index < this.length(); index++) {
-      callback(this.values[index]);
+    for (const item of this.values) {
+      callback(item);
     }
   }
 
   public append(list: List): List {
-    list.forEach(element => {
-      this.values.push(element);
-    });
-    return this
+    return List.create(...this.values, ...list.values)
   }
 
   public concat(listOfLists: List): List {
-    listOfLists.forEach(list => {
-      this.append(list as List);
-    });
-    return this
+    return listOfLists.foldl((acc: List, curr: List) => acc.append(curr), List.create(...this.values))
   }
   
   public filter<T>(predicate: (e: T) => boolean): List {
-    this.forEach(e => {
-      if (!predicate(e as T)) {
-        let index = this.values.indexOf(e)
-        this.values.splice(index, 1)
-      }
-    })
-    return this
+    return this.foldr((acc: List, curr: T) => predicate(curr) ? List.create(curr, ...acc.values) : acc, List.create()) 
   }
 
   public length(): number {
-    let count = 0
-    this.values.forEach(_ => count++)
-    return count
+    return this.foldr((acc: number, _: any) => acc + 1, 0)
   }
 
   public map<T>(transform: (e: T) => T): List {
-    for (let index = 0; index < this.values.length; index++) {
-      this.values[index] = transform(this.values[index] as T);
-    }
-    return this
+    return this.foldr((acc: List, curr: T) => List.create(transform(curr), ...acc.values), List.create())
   };
 
-  public foldl<T, U>(f: (acc: U, e: T) => U, initial: U): U {
-    let acc = initial
+  public foldl<T, U>(f: (acc: U, e: T) => U, acc: U): U {
     this.forEach(e => acc = f(acc, e as T))
     return acc
   };
   
-  public foldr<T, U>(f: (acc: U, e: T) => U, initial: U): U {
-    let acc = initial
+  public foldr<T, U>(f: (acc: U, e: T) => U, acc: U): U {
     this.reverse()
     this.forEach(e => acc = f(acc, e as T))
     return acc
   };
 
   public reverse(): List {
-    for (let index = 0; index < this.length() / 2; index++) {
+    for (let index = 0; index < this.values.length / 2; index++) {
       let tmp = this.values[index]
-      let indexToSwapWith = this.length() - 1 - index;
+      let indexToSwapWith = this.values.length - 1 - index;
       this.values[index] = this.values[indexToSwapWith]
       this.values[indexToSwapWith] = tmp
     }
