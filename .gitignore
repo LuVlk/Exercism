@@ -3,6 +3,7 @@
 
 .bsp
 .gradle
+build
 
 project
 target
