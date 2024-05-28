@@ -39,52 +39,25 @@ func FromCodon(codon string) (protein string, err error) {
 	case "AUG":
 		protein = "Methionine"
 		return
-	case "UUU":
+	case "UUU", "UUC":
 		protein = "Phenylalanine"
 		return
-	case "UUC":
-		protein = "Phenylalanine"
-		return
-	case "UUA":
+	case "UUA", "UUG":
 		protein = "Leucine"
 		return
-	case "UUG":
-		protein = "Leucine"
-		return
-	case "UCU":
+	case "UCU", "UCC", "UCA", "UCG":
 		protein = "Serine"
 		return
-	case "UCC":
-		protein = "Serine"
-		return
-	case "UCA":
-		protein = "Serine"
-		return
-	case "UCG":
-		protein = "Serine"
-		return
-	case "UAU":
+	case "UAU", "UAC":
 		protein = "Tyrosine"
 		return
-	case "UAC":
-		protein = "Tyrosine"
-		return
-	case "UGU":
-		protein = "Cysteine"
-		return
-	case "UGC":
+	case "UGU", "UGC":
 		protein = "Cysteine"
 		return
 	case "UGG":
 		protein = "Tryptophan"
 		return
-	case "UAA":
-		err = ErrStop
-		return
-	case "UAG":
-		err = ErrStop
-		return
-	case "UGA":
+	case "UAA", "UAG", "UGA":
 		err = ErrStop
 		return
 	default:
