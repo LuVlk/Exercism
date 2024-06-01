@@ -21,33 +21,30 @@ func Frequency(text string) FreqMap {
 // by making use of concurrency.
 func ConcurrentFrequency(texts []string) FreqMap {
 	out := make(chan FreqMap, len(texts))
-	in := make(chan string, len(texts))
 	wg := sync.WaitGroup{}
 
-	numWorkers := len(texts)
-	for i := 0; i < numWorkers; i++ {
+	for _, text := range texts {
 		wg.Add(1)
-		go func() {
-			for text := range in {
-				out <- Frequency(text)
-			}
+		go func(text string) {
+			out <- Frequency(text)
 			wg.Done()
-		}()
+		}(text)
 	}
 
-	for _, text := range texts {
-		in <- text
-	}
-	close(in)
+	doneCombining := make(chan bool)
+	result := FreqMap{}
+	go func() {
+		for res := range out {
+			for key, val := range res {
+				result[key] += val
+			}
+		}
+		close(doneCombining)
+	}()
 
 	wg.Wait()
 	close(out)
+	<-doneCombining
 
-	result := FreqMap{}
-	for res := range out {
-		for key, val := range res {
-			result[key] += val
-		}
-	}
 	return result
 }
