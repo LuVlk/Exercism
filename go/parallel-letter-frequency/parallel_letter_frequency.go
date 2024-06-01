@@ -17,6 +17,7 @@ func Frequency(text string) FreqMap {
 // by making use of concurrency.
 func ConcurrentFrequency(texts []string) FreqMap {
 	out := make(chan FreqMap)
+	defer close(out)
 
 	for _, text := range texts {
 		go func(s string) { out <- Frequency(s) }(text)
@@ -25,17 +26,17 @@ func ConcurrentFrequency(texts []string) FreqMap {
 	result := FreqMap{}
 
 	done := make(chan bool)
+	defer close(done)
+
 	go func() {
 		for range texts {
 			for key, val := range <-out {
 				result[key] += val
 			}
 		}
-		close(done)
+		done <- true
 	}()
 
 	<-done
-	close(out)
-
 	return result
 }
