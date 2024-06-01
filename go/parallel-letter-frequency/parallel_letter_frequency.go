@@ -27,12 +27,12 @@ func ConcurrentFrequency(texts []string) FreqMap {
 	numWorkers := len(texts)
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
-		go func(i int) {
+		go func() {
 			for text := range in {
 				out <- Frequency(text)
 			}
 			wg.Done()
-		}(i)
+		}()
 	}
 
 	for _, text := range texts {
