@@ -12,3 +12,6 @@ target
 **/.yarn/cache
 **/[O|o]bj
 **/[B|b]in
+
+.venv
+__pycache__
