@@ -9,23 +9,20 @@ pub fn abbreviate(phrase: &str) -> String {
 }
 
 fn split_camelcase(word: String) -> Vec<String> {
-    if let Some((pos, _)) = word
+    return match word
         .chars()
         .enumerate()
         .skip_while(|(_, c)| c.is_uppercase())
         .find(|(_, c)| c.is_uppercase())
     {
-        match word.split_at(pos) {
-            ("", rest) => return vec![rest.to_string()],
-            (next, rest) => {
-                return [next.to_string()]
-                    .into_iter()
-                    .chain(split_camelcase(rest.to_string()).into_iter())
-                    .collect()
-            }
-        };
-    } else {
-        return vec![word];
+        Some((pos, _)) => match word.split_at(pos) {
+            ("", rest) => vec![rest.to_string()],
+            (next, rest) => [next.to_string()]
+                .into_iter()
+                .chain(split_camelcase(rest.to_string()))
+                .collect(),
+        },
+        None => vec![word],
     };
 }
 
