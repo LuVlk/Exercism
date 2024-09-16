@@ -1,7 +1,6 @@
 package acronym
 
 import (
-	"regexp"
 	"strings"
 )
 
@@ -13,12 +12,21 @@ import (
 // The function recognizes subsequent words by the presence of a space, hyphen, or
 // underscore preceding the first letter of the word.
 func Abbreviate(s string) string {
-	r := regexp.MustCompile(`(^|\s|-|_)[a-zA-Z]`)
-	matches := r.FindAllString(s, -1)
-
-	res := ""
-	for _, m := range matches {
-		res += strings.ToUpper(strings.Trim(m, " -_"))
+	var res []rune
+	for i, r := range s {
+		if ((r >= 'A' && r <= 'Z') || (r >= 'a' && r <= 'z')) && (i == 0 || s[i-1] == ' ' || s[i-1] == '-' || s[i-1] == '_') {
+			res = append(res, r)
+		}
 	}
-	return res
+	return strings.ToUpper(string(res))
 }
+
+// bench
+// goos: windows
+// goarch: amd64
+// pkg: acronym
+// cpu: 13th Gen Intel(R) Core(TM) i7-13700H
+// === RUN   BenchmarkAcronym
+// BenchmarkAcronym
+// BenchmarkAcronym-20
+//   409398              2523 ns/op             448 B/op         32 allocs/op
