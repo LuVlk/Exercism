@@ -38,7 +38,7 @@ func (b *Buffer) Overwrite(c byte) {
 }
 
 func (b *Buffer) Reset() {
-	b.data = make([]byte, 0, cap(b.data))
+	b.data = make([]byte, 0, b.size)
 }
 
 /*
