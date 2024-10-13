@@ -15,3 +15,6 @@ target
 
 .venv
 __pycache__
+
+.metals
+.bloop
