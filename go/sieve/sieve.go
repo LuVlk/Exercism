@@ -28,27 +28,33 @@ func Sieve(limit int) []int {
 		i += 2
 	}
 
-	var primes []int = []int{2}
+	var primes []int = make([]int, limit/2)
+	var pidx int
+
+	primes[pidx] = 2
+	pidx++
+
 	for i := 3; i <= limit; i++ {
 		if sieve[i] {
-			primes = append(primes, i)
+			primes[pidx] = i
+			pidx++
 		}
 	}
 
-	return primes
+	return primes[:pidx]
 }
 
 // goos: windows
 // goarch: amd64
 // pkg: sieve
 // cpu: 13th Gen Intel(R) Core(TM) i7-13700H
-// BenchmarkSieve-20         367741              3332 ns/op            5336 B/op         21 allocs/op
-// BenchmarkSieve-20         356944              3334 ns/op            5336 B/op         21 allocs/op
-// BenchmarkSieve-20         313124              4322 ns/op            5336 B/op         21 allocs/op
-// BenchmarkSieve-20         225589              5073 ns/op            5336 B/op         21 allocs/op
-// BenchmarkSieve-20         245997              4414 ns/op            5336 B/op         21 allocs/op
+// BenchmarkSieve-20         315362              3736 ns/op            5264 B/op          8 allocs/op
+// BenchmarkSieve-20         377554              3544 ns/op            5264 B/op          8 allocs/op
+// BenchmarkSieve-20         337554              4065 ns/op            5264 B/op          8 allocs/op
+// BenchmarkSieve-20         318007              3767 ns/op            5264 B/op          8 allocs/op
+// BenchmarkSieve-20         332214              3933 ns/op            5264 B/op          8 allocs/op
 // PASS
-// ok      sieve   6.266s
+// ok      sieve   7.567s
 
 // benchstat
 //          │  .\old.txt   │              .\new.txt              │
