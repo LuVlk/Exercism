@@ -1,7 +1,7 @@
 const std = @import("std");
 
-pub fn primes(buffer: []u32, limit: u32) []u32 {
-    var sieve = [_]bool{true} ** 1001;
+pub fn primes(buffer: []u32, comptime limit: u32) []u32 {
+    var sieve = [_]bool{true} ** (limit + 1);
     var prime_cntr: u32 = 0;
 
     var i: u32 = 2;
