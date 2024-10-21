@@ -5,8 +5,7 @@ import "strings"
 func IsPangram(input string) bool {
 	lowercase_input := strings.ToLower(input)
 
-	for i := 0; i < 26; i++ {
-		c := rune('a' + i)
+	for c := 'a'; c <= 'z'; c++ {
 		if !strings.ContainsRune(lowercase_input, c) {
 			return false
 		}
