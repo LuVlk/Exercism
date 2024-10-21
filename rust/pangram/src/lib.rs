@@ -6,10 +6,7 @@ pub fn is_pangram(sentence: &str) -> bool {
         .chars()
         .filter(char::is_ascii_alphabetic)
         .map(|c| c.to_ascii_lowercase())
-        .fold(HashSet::new(), |mut set, c| {
-            set.insert(c);
-            set
-        });
+        .collect::<HashSet<char>>();
 
     unique_chars.len() == 26
 }
