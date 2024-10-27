@@ -49,7 +49,7 @@ fn to_digits(mut number_base_10: u32, to_base: u32) -> Result<Vec<u32>, Error> {
     let mut converted = VecDeque::new();
     loop {
         converted.push_front(number_base_10 % to_base);
-        number_base_10 = number_base_10 / to_base;
+        number_base_10 /= to_base;
         if number_base_10 == 0 {
             break;
         }
