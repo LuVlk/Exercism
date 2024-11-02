@@ -1,3 +1,5 @@
+# based on: https://exercism.org/tracks/python/exercises/zebra-puzzle/solutions/paiv
+
 import itertools
 
 ppl = 'Norwegian Englishman Ukrainian Spaniard Japanese'.split()
