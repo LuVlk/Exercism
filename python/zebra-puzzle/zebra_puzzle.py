@@ -5,15 +5,15 @@ import itertools
 ppl = 'Norwegian Englishman Ukrainian Spaniard Japanese'.split()
 
 def drinks_water():
-    x,_ = solve()
+    x,_ = next(solve())
     return ppl[x]
 
 def owns_zebra():
-    _,x = solve()
+    _,x = next(solve())
     return ppl[x]
 
 def solve():
-    g = ((water, zebra)
+    for solution in ((water, zebra)
         for (red, green, ivory, yellow, blue) in itertools.permutations(range(5))
         if green - ivory == 1 # 6. The green house is immediately to the right of the ivory house. 
         for (norway, english, ukraine, spain, japan) in itertools.permutations(range(5))
@@ -33,5 +33,8 @@ def solve():
         if football == orange # 13. The person who plays football drinks orange juice.
         if chess == japan # 14. The Japanese person plays chess.
         if abs(norway - blue) == 1 # 15. The Norwegian lives next to the blue house.
-        )
-    return next(g)
+        ):
+        yield solution
+
+if __name__ == '__main__':
+    print(list(solve()))
