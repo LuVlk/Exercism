@@ -3,7 +3,6 @@ package dndcharacter
 import (
 	"math"
 	"math/rand"
-	"slices"
 )
 
 type Character struct {
@@ -23,20 +22,7 @@ func Modifier(score int) int {
 
 // Ability uses randomness to generate the score for an ability
 func Ability() int {
-	rolls := make([]int, 4)
-
-	for i := range rolls {
-		rolls[i] = rand.Intn(6) + 1
-	}
-
-	slices.Sort(rolls)
-
-	score := 0
-	for _, roll := range rolls[1:] {
-		score += roll
-	}
-
-	return score
+	return rand.Intn(15) + 3
 }
 
 // GenerateCharacter creates a new Character with random scores for abilities
@@ -60,20 +46,20 @@ func GenerateCharacter() Character {
 // goarch: amd64
 // pkg: dnd-character
 // cpu: 13th Gen Intel(R) Core(TM) i7-13700H
-// BenchmarkModifier-20            1000000000               0.8045 ns/op          0 B/op          0 allocs/op
-// BenchmarkModifier-20            1000000000               0.7506 ns/op          0 B/op          0 allocs/op
-// BenchmarkModifier-20            1000000000               0.7304 ns/op          0 B/op          0 allocs/op
-// BenchmarkModifier-20            1000000000               0.7414 ns/op          0 B/op          0 allocs/op
-// BenchmarkModifier-20            1000000000               0.9272 ns/op          0 B/op          0 allocs/op
-// BenchmarkAbility-20             11838008                96.14 ns/op            0 B/op          0 allocs/op
-// BenchmarkAbility-20             12659923                91.91 ns/op            0 B/op          0 allocs/op
-// BenchmarkAbility-20             12805080                91.19 ns/op            0 B/op          0 allocs/op
-// BenchmarkAbility-20             10400541               113.5 ns/op             0 B/op          0 allocs/op
-// BenchmarkAbility-20             12040744               111.0 ns/op             0 B/op          0 allocs/op
-// BenchmarkCharacter-20            1843574               614.3 ns/op             0 B/op          0 allocs/op
-// BenchmarkCharacter-20            2020203               635.6 ns/op             0 B/op          0 allocs/op
-// BenchmarkCharacter-20            1828016               668.9 ns/op             0 B/op          0 allocs/op
-// BenchmarkCharacter-20            1875812               679.9 ns/op             0 B/op          0 allocs/op
-// BenchmarkCharacter-20            1953675               688.9 ns/op             0 B/op          0 allocs/op
+// BenchmarkModifier-20            1000000000               0.7715 ns/op          0 B/op          0 allocs/op
+// BenchmarkModifier-20            1000000000               0.7596 ns/op          0 B/op          0 allocs/op
+// BenchmarkModifier-20            1000000000               0.7682 ns/op          0 B/op          0 allocs/op
+// BenchmarkModifier-20            1000000000               0.7677 ns/op          0 B/op          0 allocs/op
+// BenchmarkModifier-20            1000000000               0.7455 ns/op          0 B/op          0 allocs/op
+// BenchmarkAbility-20             100000000               10.03 ns/op            0 B/op          0 allocs/op
+// BenchmarkAbility-20             121148352               11.48 ns/op            0 B/op          0 allocs/op
+// BenchmarkAbility-20             100000000               12.70 ns/op            0 B/op          0 allocs/op
+// BenchmarkAbility-20             80351941                12.79 ns/op            0 B/op          0 allocs/op
+// BenchmarkAbility-20             85541368                12.74 ns/op            0 B/op          0 allocs/op
+// BenchmarkCharacter-20           13280917                84.30 ns/op            0 B/op          0 allocs/op
+// BenchmarkCharacter-20           14098663                85.14 ns/op            0 B/op          0 allocs/op
+// BenchmarkCharacter-20           13807021                79.99 ns/op            0 B/op          0 allocs/op
+// BenchmarkCharacter-20           13413320                83.57 ns/op            0 B/op          0 allocs/op
+// BenchmarkCharacter-20           12936066                83.47 ns/op            0 B/op          0 allocs/op
 // PASS
-// ok      dnd-character   20.395s
+// ok      dnd-character   18.249s
