@@ -1,21 +1,7 @@
 #!/usr/bin/env bash
 
-out=""
+(( $1 % 3 )) || out+=Pling
+(( $1 % 5 )) || out+=Plang
+(( $1 % 7 )) || out+=Plong
 
-if [[ $(( $1 % 3)) == 0 ]]; then
-    out+="Pling"
-fi
-
-if [[ $(( $1 % 5)) == 0 ]]; then
-    out+="Plang"
-fi
-
-if [[ $(( $1 % 7)) == 0 ]]; then
-    out+="Plong"
-fi
-
-if [ -z "$out" ]; then
-    out="$1"
-fi
-
-echo "$out"
+echo ${out:-$1}
