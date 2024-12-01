@@ -1,22 +1,23 @@
 #!/usr/bin/env bash
 
-if (( $# != 2 )); then
-    >&2 echo "Usage: hamming.sh <string1> <string2>"
-    exit 1
-fi
+error () {
+  printf '%s\n' "$*"
+  exit 1
+}
 
-if [[ ${#1} != ${#2} ]]; then 
-    echo "strands must be of equal length" 
-    exit 1
-fi
+main () {
+  (( $# == 2 )) || error 'Usage: hamming.sh <string1> <string2>'
+  
+  dna1=$1 dna2=$2 
 
-left_dna=$1
-right_dna=$2
+  (( ${#dna1} == ${#dna2} )) || error 'strands must be of equal length'
 
-(( hamming=0 ))
+  declare -i hamming
+  for (( i = 0; i < ${#dna1}; i++ )); do
+    [[ ${dna1:i:1} == "${dna2:i:1}" ]] || hamming+=1
+  done
 
-for (( i=0; i<${#left_dna}; i++ )); do
-  [[ "${left_dna:$i:1}" == "${right_dna:$i:1}" ]] || (( hamming++ ))
-done
+  printf '%d\n' "$hamming"
+}
 
-echo "$hamming"
+main "$@"
